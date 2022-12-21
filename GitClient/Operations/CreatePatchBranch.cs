@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Web;
 using GitClient.Utilities;
 using Spectre.Console;
 
@@ -53,14 +54,23 @@ namespace GitClient.Operations
                     if (!TryCherryPick(hash.Split(' ').First()))
                     {
                         AnsiConsole.WriteLine("Failed patching a commit. Bailing on the rest.");
-                        return;
+                        continue;
                     }
                 }
+                GitHelpers.GitCommand($"push origin {pb.Item2}");
+                var url = "https://stash.group1.com/projects/ETDEV/repos/etdev-bare/pull-requests" +
+                              "?create" +
+                              $"&targetBranch={HttpUtility.UrlEncode(string.Join("/", pb.rb.Split("/").Skip(1)))}" +
+                              $"&sourceBranch={HttpUtility.UrlEncode(pb.Item2)}";
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
             }
 
 
             //TODO automatically create the pull request on bitbucket
-            //GitHelpers.GitCommand($"push {patchBranchName}");
         }
 
         private bool TryCherryPick(string hash)

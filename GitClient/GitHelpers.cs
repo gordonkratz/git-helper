@@ -78,8 +78,10 @@ namespace GitClient
 
         internal static string GitCommand(string args)
         {
-            var output = CommandOutput($"git {args}", repo);
+            var command = $"git {args}";
+            var output = CommandOutput(command, repo);
             #if DEBUG
+            Console.WriteLine(command);
             Console.WriteLine(output);
             #endif
             return output;

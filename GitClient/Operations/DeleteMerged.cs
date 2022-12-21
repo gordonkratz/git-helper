@@ -54,6 +54,7 @@ namespace GitClient.Operations
             new DeleteMerged().Operation();
             new DeletePatchBranches().Operation();
             new DeleteReleaseBranches().Operation();
+            GitHelpers.GitCommand("fetch --prune");
         }
     }
 }
